@@ -173,7 +173,7 @@ LOGGING = {
             'handlers': ['console', 'file'],
             'level': 'INFO',
         },
-        'myapp': {
+        'goodsapp': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
