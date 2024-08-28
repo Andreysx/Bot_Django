@@ -3,6 +3,6 @@ from .views import index
 
 app_name = 'goodsapp'
 
-urlpatterns = {
+urlpatterns = [
     path('', index, name='index')
-}
+]
