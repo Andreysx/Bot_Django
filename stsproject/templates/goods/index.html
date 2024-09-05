@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} Main page(Grid) {% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-trasparent my-4 p-3" style="position: relative;">
+    <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
+        {% for order in all_orders %}
+        <div class="card m-3" style="width: 11rem;">
+<!--           <img src="{{ recipe.image.url }}">-->
+            <div class="card-body">
+                <h5 class="card-title">{{ order.name }}</h5>
+                <p class="card-text">{{ order.description|truncatechars:5 }}</p>
+                <a href="{% url 'goodsapp:order_review' order.id %}" class="btn btn-secondary">Открыть</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

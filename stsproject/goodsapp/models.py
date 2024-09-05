@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 class Orders(models.Model):
-    name = models.CharField(max_length=50, null=False)
+    name = models.CharField(max_length=50)
     description = models.TextField(max_length=200)
     date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -16,12 +16,12 @@ class Orders(models.Model):
         return f"{self.name}, {self.date}, {self.is_done}"
 
 class Products(models.Model):
-    article = models.IntegerField(blank=False, null=False)
-    name = models.CharField(max_length=80, blank=False)
-    quantity = models.IntegerField(blank=False, null=False)
-    unit_price = models.IntegerField(blank=False, null=False)
-    weight = models.IntegerField(blank=False, null=False)
-    amount = models.IntegerField(blank=False, null=False)
+    article = models.IntegerField(blank=False)
+    name = models.CharField(max_length=80)
+    quantity = models.IntegerField()
+    unit_price = models.IntegerField()
+    weight = models.IntegerField()
+    amount = models.IntegerField(null=True)
     is_done = models.BooleanField(default=False)
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
 
