@@ -9,5 +9,9 @@ def index(request):
     return render(request, 'goods/index.html', {'all_orders': orders})
 
 
-def order_review(request):
-    pass
+def order_review(request, order_id):
+    order = get_object_or_404(Orders, pk=order_id)
+    products = order.products.all()
+    return render(request, 'goods/order_review.html', {'order': order, 'products': products})
+
+

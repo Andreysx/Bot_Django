@@ -23,7 +23,7 @@ class Products(models.Model):
     weight = models.IntegerField()
     amount = models.IntegerField(null=True)
     is_done = models.BooleanField(default=False)
-    order = models.ForeignKey(Orders, on_delete=models.CASCADE)
+    order = models.ForeignKey(Orders,related_name='products',on_delete=models.CASCADE)
 
 
     def __str__(self):
