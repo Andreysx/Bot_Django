@@ -13,9 +13,31 @@
                             Заказы
                     </a>
                 </li>
-
             </ul>
              <ul class="navbar-nav mb-2 mb-lg-0">
+                 {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="nav-link" type="submit">Выйти</button>
+                    </form>
+                </li>
+                {% else %}
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path_info == '/users/register/' %}active{% endif %}"
+                       href="{% url 'register' %}">
+                        Регистрация
+                        </a>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path_info == '/users/login/' %}active{% endif %}"
+                        href="{% url 'login' %}">
+                        Авторизация
+                    </a>
+                </li>
+                 {% endif %}
             </ul>
         </div>
     </div>
