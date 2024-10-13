@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Результаты поиска
+{% endblock %}
+
+{% block content %}
+<h2>Результаты поиска для заказа: {{ order.name }}</h2>
+
+<form method="get" action="{% url 'goodsapp:search_product' order.id %}">
+    <input type="text" name="article" placeholder="Введите артикул">
+    <button type="submit">Поиск</button>
+</form>
+
+<ul>
+    {% for product in products %}
+        <li>{{ product.name }} - Артикул: {{ product.article }} - Количество: {{ product.quantity }}</li>
+    {% empty %}
+        <li>Продукты не найдены.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
