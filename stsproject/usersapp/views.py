@@ -11,6 +11,8 @@ def register(request):
             user = form.save()
             login(request, user)  # Автоматический вход после регистрации
             return redirect('/')  # Перенаправление на главную страницу
+        else:
+            print(form.errors)  # Вывод ошибок формы для отладки
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/registration.html', {'form': form})
