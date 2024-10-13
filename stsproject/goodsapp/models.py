@@ -16,12 +16,12 @@ class Orders(models.Model):
         return f"{self.name}, {self.date}, {self.is_done}"
 
 class Products(models.Model):
-    article = models.IntegerField(blank=False)
+    article = models.CharField(max_length=80,blank=False)
     name = models.CharField(max_length=80)
-    quantity = models.IntegerField()
-    unit_price = models.IntegerField()
-    weight = models.IntegerField()
-    amount = models.IntegerField(null=True)
+    quantity = models.CharField(max_length=80)
+    unit_price = models.CharField(max_length=80)
+    weight = models.CharField(max_length=80)
+    amount = models.CharField(max_length=80,null=True)
     is_done = models.BooleanField(default=False)
     order = models.ForeignKey(Orders,related_name='products',on_delete=models.CASCADE)
 

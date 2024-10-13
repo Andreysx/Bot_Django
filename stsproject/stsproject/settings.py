@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import sqlite3
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,11 +34,9 @@ CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = ['127.0.0.1',
                  ]
 
-
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
 
 # Application definition
 
@@ -83,7 +84,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'stsproject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -93,6 +93,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Устанавливаем режим WAL Режим WAL позволяет избежать
+# блокировок при записи и чтении, так как он позволяет параллельные операции.
+def set_wal_mode():
+    connection = sqlite3.connect(BASE_DIR / "db.sqlite3")
+    connection.execute("PRAGMA journal_mode=WAL;")
+    connection.close()
+
+
+set_wal_mode()
+
 
 
 # Password validation
@@ -113,7 +124,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -124,7 +134,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

@@ -34,7 +34,7 @@ class Command(BaseCommand):
             # Генерируем продукты для каждого заказа
             for j in range(1, count + 1):
                 product = Products(
-                    article=j,  # Используем j как номер статьи
+                    article=j,  # Используем j как номер артикла
                     name=f'Name{j} from order {order.id}',
                     quantity=randint(1, 10),  # Случайное количество
                     unit_price=randint(100, 1000),  # Случайная цена за единицу

@@ -33,5 +33,23 @@
     </div>
     <p>&copy; Fun </p>
     </footer>
+
+<script>
+document.querySelectorAll('.accordion-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const content = button.nextElementSibling;
+
+        // Переключение класса open для анимации
+        content.classList.toggle('open');
+
+        // Переключение видимости контента
+        if (content.classList.contains('open')) {
+            content.style.maxHeight = content.scrollHeight + "px"; // Устанавливаем высоту для анимации
+        } else {
+            content.style.maxHeight = null; // Сбрасываем высоту
+        }
+    });
+});
+</script>
 </body>
 </html>

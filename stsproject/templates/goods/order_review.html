@@ -6,6 +6,16 @@
 <p>Дата: {{ order.date }}</p>
 <p>Автор: {{ order.author }}</p>
 <p>Статус завершения: {{ order.is_done }}</p>
+<h3>Поиск продукта по артикулу:</h3>
+<form method="get" action="{% url 'goodsapp:search_product' order.id %}">
+    <input type="text" name="article" placeholder="Введите артикул">
+    <button type="submit">Поиск</button>
+</form>
+<form method="post" action="{% url 'goodsapp:delete_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить заказ</button>
+</form>
+
 <h3>Продукты в заказе</h3>
 <ul class="list-group">
     {% for product in products %}
