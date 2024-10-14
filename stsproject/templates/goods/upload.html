@@ -5,7 +5,22 @@
     <h2>Загрузить Excel файл</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div class="mb-3">
+            {{ form.name.label }}
+            {{ form.name }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.description.label }}
+            {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.file.label }}
+            {{ form.file }}
+        </div>
+
         <button type="submit" class="btn btn-primary">Загрузить</button>
     </form>
 </div>

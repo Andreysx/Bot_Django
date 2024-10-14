@@ -5,18 +5,43 @@
 {% endblock %}
 
 {% block content %}
-<h2>Результаты поиска для заказа: {{ order.name }}</h2>
+<div class="container">
+    <h2>Результаты поиска для заказа: {{ order.name }}</h2>
 
-<form method="get" action="{% url 'goodsapp:search_product' order.id %}">
-    <input type="text" name="article" placeholder="Введите артикул">
-    <button type="submit">Поиск</button>
-</form>
+    <form method="get" action="{% url 'goodsapp:search_product' order.id %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="article" class="form-control" placeholder="Введите артикул" aria-label="Введите артикул">
+            <button class="btn btn-primary" type="submit">Поиск</button>
+        </div>
+    </form>
 
-<ul>
-    {% for product in products %}
-        <li>{{ product.name }} - Артикул: {{ product.article }} - Количество: {{ product.quantity }}</li>
-    {% empty %}
-        <li>Продукты не найдены.</li>
-    {% endfor %}
-</ul>
+    {% if products %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Название</th>
+                <th>Количество</th>
+                <th>Цена за единицу</th>
+                <th>Сумма</th>
+                <th>Вес</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.article }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity|floatformat:0 }}</td>
+                <td>{{ product.unit_price }}</td>
+                <td>{{ product.amount }}</td>
+                <td>{{ product.weight }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center">Продукты не найдены.</p>
+    {% endif %}
+</div>
 {% endblock %}

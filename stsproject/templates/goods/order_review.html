@@ -1,31 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{{ order.name }}</h2>
-<p>{{ order.description }}</p>
-<p>Дата: {{ order.date }}</p>
-<p>Автор: {{ order.author }}</p>
-<p>Статус завершения: {{ order.is_done }}</p>
-<h3>Поиск продукта по артикулу:</h3>
-<form method="get" action="{% url 'goodsapp:search_product' order.id %}">
-    <input type="text" name="article" placeholder="Введите артикул">
-    <button type="submit">Поиск</button>
-</form>
-<form method="post" action="{% url 'goodsapp:delete_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Удалить заказ</button>
-</form>
+<div class="container">
+    <!-- Информация о заказе в карточке -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">{{ order.name }}</h2>
+            <p class="card-text">{{ order.description }}</p>
+            <p><strong>Дата:</strong> {{ order.date }}</p>
+            <p><strong>Автор:</strong> {{ order.author }}</p>
+            <p><strong>Статус завершения:</strong> {{ order.is_done|yesno:"Завершен,Не завершен" }}</p>
+        </div>
+    </div>
 
-<h3>Продукты в заказе</h3>
-<ul class="list-group">
-    {% for product in products %}
-    <li class="list-group-item">
-      Артикул: {{ product.article }} Название - {{ product.name }} - Количество: {{ product.quantity }} - Цена за единицу: {{ product.unit_price }} - Сумма: {{ product.amount }}
-    </li>
-    {% empty %}
-    <li class="list-group-item">Нет продуктов в этом заказе.</li>
-    {% endfor %}
-</ul>
+    <!-- Форма поиска продукта по артикулу -->
+    <h3>Поиск продукта по артикулу:</h3>
+    <form method="get" action="{% url 'goodsapp:search_product' order.id %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="article" class="form-control" placeholder="Введите артикул" aria-label="Введите артикул">
+            <button class="btn btn-primary" type="submit">Поиск</button>
+        </div>
+    </form>
 
+    <!-- Форма удаления заказа -->
+    <form method="post" action="{% url 'goodsapp:delete_order' order.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger mb-4">Удалить заказ</button>
+    </form>
 
+    <!-- Таблица с продуктами в заказе -->
+    <h3>Продукты в заказе</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Название</th>
+                <th>Количество штук</th>
+                <th>Цена за единицу, RUB</th>
+                <th>Стоимость, RUB</th>
+                <th>Вес, кг</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.article }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity|floatformat:0 }}</td>
+                <td>{{ product.unit_price }}</td>
+                <td>{{ product.amount }}</td>
+                <td>{{ product.weight }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Нет продуктов в этом заказе.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
 {% endblock %}

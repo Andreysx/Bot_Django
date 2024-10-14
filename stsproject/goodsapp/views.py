@@ -58,9 +58,9 @@ def upload_order(request):
         if form.is_valid():
             # Сохранение нового заказа
             order = Orders.objects.create(
-                name="Новый заказ",  # Вы можете задать имя заказа по своему усмотрению
-                description="Загружено из Excel",
-                author=request.user  # Устанавливаем текущего пользователя как автора заказа
+                name=form.cleaned_data['name'],  # Используем название из формы
+                description=form.cleaned_data['description'],  # Используем описание из формы
+                author=request.user
             )
 
             # Обработка Excel файла
