@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Orders, Products
 from .forms import ExcelUploadForm
 import pandas as pd
@@ -45,6 +46,18 @@ def search_product(request, order_id):
 
     return render(request, 'goods/search_results.html', {'order': order, 'products': products})
 
+
+def upload_order_view(request):
+    """
+     Добавление проверки авторизации
+    :param request:
+    :return:
+    """
+    if not request.user.is_authenticated:
+        messages.error(request, "Пожалуйста, войдите в систему для загрузки файла.")
+        return redirect('login')  # Убедитесь, что здесь указан правильный URL для страницы входа
+
+    return upload_order(request)  # Вызов оригинального представления для загрузки файла
 
 @login_required
 def upload_order(request):
@@ -99,20 +112,18 @@ def upload_order(request):
     return render(request, 'goods/upload.html', {'form': form})
 
 
+
 @login_required
-def delete_order(request, order_id):
-    """
-    Удаление файла excel(Заказа) именно тем пользователем что загрузил его
-    :param request:
-    :param order_id:
-    :return:
-    """
+def confirm_delete_order(request, order_id):
     order = get_object_or_404(Orders, pk=order_id)
 
     # Проверка, что текущий пользователь является автором заказа
-    if order.author == request.user:
+    if order.author != request.user:
+        return redirect('goodsapp:index')  # Перенаправление на главную страницу, если не автор
+
+    if request.method == 'POST':
         order.delete()  # Удаление заказа
+        messages.success(request, 'Заказ успешно удален.')  # Сообщение об успешном удалении используя Django Messages Framework
         return redirect('goodsapp:index')  # Перенаправление на главную страницу
-    else:
-        # Можно добавить сообщение об ошибке или перенаправить на другую страницу
-        return redirect('goodsapp:index')  # Перенаправление на главную страницу
+
+    return render(request, 'goods/confirm_delete.html', {'order': order})

@@ -23,10 +23,9 @@
     </form>
 
     <!-- Форма удаления заказа -->
-    <form method="post" action="{% url 'goodsapp:delete_order' order.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger mb-4">Удалить заказ</button>
-    </form>
+ <form method="get" action="{% url 'goodsapp:confirm_delete_order' order.id %}">
+    <button type="submit" class="btn btn-danger">Удалить заказ</button>
+</form>
 
     <!-- Таблица с продуктами в заказе -->
     <h3>Продукты в заказе</h3>
