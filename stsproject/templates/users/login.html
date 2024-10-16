@@ -1,17 +1,32 @@
 {% extends 'base.html' %}
+
 {% block title %}
 Авторизация
 {% endblock %}
-{% block content %}
-<h2 class="text-center" >Вход</h2>
-<br><br>
-<div class="form-group">
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-secondary mt-3">Войти</button>
-    </form>
-</div>
 
-<p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Вход</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Имя пользователя</label>
+                            {{ form.username }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            {{ form.password }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    </form>
+                    <p class="mt-3 text-center">Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
