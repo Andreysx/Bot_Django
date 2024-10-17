@@ -112,9 +112,27 @@ def upload_order(request):
     return render(request, 'goods/upload.html', {'form': form})
 
 
+@login_required
+def delete_product(request, product_id):
+    """Удаление продукта из заказа"""
+    product = get_object_or_404(Products, pk=product_id)
+
+    # Проверка, что текущий пользователь является автором заказа
+    if product.order.author != request.user:
+        messages.error(request, "У вас нет прав на удаление этого продукта.")
+        return redirect('goodsapp:index')  # Перенаправление на главную страницу
+
+    if request.method == 'POST':
+        product.delete()  # Удаление продукта
+        messages.success(request, 'Продукт успешно удален.')  # Сообщение об успешном удалении
+        return redirect('goodsapp:order_review', product.order.id)  # Перенаправление на страницу заказа
+
+    return render(request, 'goods/confirm_delete_product.html', {'product': product})
+
 
 @login_required
 def confirm_delete_order(request, order_id):
+    """Удаление заказа"""
     order = get_object_or_404(Orders, pk=order_id)
 
     # Проверка, что текущий пользователь является автором заказа

@@ -17,20 +17,23 @@
         <button type="submit" class="btn btn-primary mt-2">Поиск</button>
     </form>
 
-    <div class="accordion">
+    <div class="row">
         {% for order in all_orders %}
-        <div class="accordion-item">
-            <button class="accordion-button">{{ order.name }}</button>
-            <div class="accordion-content">
-                <p>{{ order.description }}</p>
-                <p>Дата: {{ order.date }}</p>
-                <a href="{% url 'goodsapp:order_review' order.id %}" class="btn btn-secondary">Открыть</a>
+        <div class="col-12 mb-3">  <!-- Изменено на col-12 для полной ширины -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ order.name }}</h5>
+                    <p class="card-text">{{ order.description }}</p>
+                    <p class="text-muted">Дата: {{ order.date }}</p>
+                    <a href="{% url 'goodsapp:order_review' order.id %}" class="btn btn-secondary btn-sm">Открыть</a>  <!-- Уменьшенный размер кнопки -->
+                </div>
             </div>
         </div>
         {% empty %}
-        <p>Нет заказов.</p>
+        <div class="col-12">
+            <p>Нет заказов.</p>
+        </div>
         {% endfor %}
     </div>
 </div>
 {% endblock %}
-

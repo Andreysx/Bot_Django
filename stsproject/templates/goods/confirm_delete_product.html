@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Подтверждение удаления продукта</h2>
+    <p>Вы уверены, что хотите удалить продукт "{{ product.name }}"?</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Информация о продукте</h5>
+            <p><strong>Артикул:</strong> {{ product.article }}</p>
+            <p><strong>Количество:</strong> {{ product.quantity }}</p>
+            <p><strong>Цена за единицу:</strong> {{ product.unit_price }}</p>
+            <p><strong>Вес:</strong> {{ product.weight }}</p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="{% url 'goodsapp:order_review' product.order.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

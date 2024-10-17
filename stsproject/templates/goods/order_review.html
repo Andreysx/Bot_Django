@@ -29,34 +29,43 @@
 
     <!-- Таблица с продуктами в заказе -->
     <h3>Продукты в заказе</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Артикул</th>
-                <th>Название</th>
-                <th>Количество штук</th>
-                <th>Цена за единицу, RUB</th>
-                <th>Стоимость, RUB</th>
-                <th>Вес, кг</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr>
-                <td>{{ product.article }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.quantity|floatformat:0 }}</td>
-                <td>{{ product.unit_price }}</td>
-                <td>{{ product.amount }}</td>
-                <td>{{ product.weight }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">Нет продуктов в этом заказе.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Название</th>
+            <th>Количество штук</th>
+            <th>Цена за единицу, RUB</th>
+            <th>Стоимость, RUB</th>
+            <th>Вес, кг</th>
+            <th>Действия</th> <!-- Новый столбец для действий -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.article }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity|floatformat:0 }}</td>
+            <td>{{ product.unit_price }}</td>
+            <td>{{ product.amount }}</td>
+            <td>{{ product.weight }}</td>
+            <td>
+                <!-- Кнопка для удаления продукта -->
+                <form action="{% url 'goodsapp:delete_product' product.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <!-- Перенаправление на страницу подтверждения -->
+                    <a href="{% url 'goodsapp:delete_product' product.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">Нет продуктов в этом заказе.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </div>
 {% endblock %}
