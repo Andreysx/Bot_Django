@@ -125,23 +125,22 @@ def delete_product(request, product_id):
     if request.method == 'POST':
         product.delete()  # Удаление продукта
         messages.success(request, 'Продукт успешно удален.')  # Сообщение об успешном удалении
-        return redirect('goodsapp:order_review', product.order.id)  # Перенаправление на страницу заказа
+        return redirect('goodsapp:order_review', product.order.id)
 
     return render(request, 'goods/confirm_delete_product.html', {'product': product})
 
-
 @login_required
 def confirm_delete_order(request, order_id):
-    """Удаление заказа"""
     order = get_object_or_404(Orders, pk=order_id)
 
     # Проверка, что текущий пользователь является автором заказа
     if order.author != request.user:
-        return redirect('goodsapp:index')  # Перенаправление на главную страницу, если не автор
+        messages.error(request, "У вас нет прав на удаление этого заказа.")
+        return redirect('goodsapp:index')  # Перенаправление на главную страницу
 
     if request.method == 'POST':
         order.delete()  # Удаление заказа
-        messages.success(request, 'Заказ успешно удален.')  # Сообщение об успешном удалении используя Django Messages Framework
+        messages.success(request, 'Заказ успешно удален.')  # Сообщение об успешном удалении
         return redirect('goodsapp:index')  # Перенаправление на главную страницу
 
     return render(request, 'goods/confirm_delete.html', {'order': order})

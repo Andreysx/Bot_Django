@@ -14,7 +14,9 @@ from pathlib import Path
 import os
 import sqlite3
 
-
+LOGIN_URL = 'login'  # Убедитесь, что это соответствует вашему маршруту для входа
+LOGIN_REDIRECT_URL = 'goodsapp:index'  # Куда перенаправлять после входа
+LOGOUT_REDIRECT_URL = 'goodsapp:index'  # Куда перенаправлять после выхода
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
