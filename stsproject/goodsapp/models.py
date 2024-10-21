@@ -15,6 +15,14 @@ class Orders(models.Model):
     def __str__(self):
         return f"{self.name}, {self.date}, {self.is_done}"
 
+    def update_status(self):
+        """Обновление статуса заказа на 'Завершен', если все продукты отмечены как 'Отмечены'."""
+        if all(product.is_done for product in self.products.all()):
+            self.is_done = True
+        else:
+            self.is_done = False
+        self.save()
+
 class Products(models.Model):
     article = models.CharField(max_length=80,blank=False)
     name = models.CharField(max_length=80)

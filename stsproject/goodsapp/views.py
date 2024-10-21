@@ -34,6 +34,7 @@ def order_review(request, order_id):
     products = order.products.all()
     return render(request, 'goods/order_review.html', {'order': order, 'products': products})
 
+
 def search_product(request, order_id):
     """Поиск продукта по артиклу"""
     order = get_object_or_404(Orders, pk=order_id)
@@ -43,6 +44,14 @@ def search_product(request, order_id):
         article = request.GET.get('article')
         if article:
             products = products.filter(article=article)  # Фильтруем по полю article
+
+            # Обновляем статус найденных продуктов
+            for product in products:
+                product.is_done = True
+                product.save()  # Сохраняем изменения в БД
+
+            # Обновляем статус заказа
+            order.update_status()
 
     return render(request, 'goods/search_results.html', {'order': order, 'products': products})
 
@@ -62,7 +71,7 @@ def upload_order_view(request):
 @login_required
 def upload_order(request):
     """
-    Загрузка excel файла(БЕЗ ШАПКИ) только авторизованным пользователем, парсинг и добавление  в бд
+    Загрузка excel файла(БЕЗ ШАПКИ) только авторизованным пользователем, парсинг и добавление в БД
     :param request:
     :return:
     """
@@ -71,45 +80,104 @@ def upload_order(request):
         if form.is_valid():
             # Сохранение нового заказа
             order = Orders.objects.create(
-                name=form.cleaned_data['name'],  # Используем название из формы
-                description=form.cleaned_data['description'],  # Используем описание из формы
+                name=form.cleaned_data['name'],
+                description=form.cleaned_data['description'],
                 author=request.user
             )
 
-            # Обработка Excel файла
-            df = pd.read_excel(form.cleaned_data['file'], engine='openpyxl')
+            # Обработка Excel файла без указания заголовков
+            df = pd.read_excel(form.cleaned_data['file'], engine='openpyxl', header=None)
 
-            # Предположим, что данные начинаются с первой строки и у вас есть следующие столбцы:
-            # 'article', 'name', 'quantity', 'unit_price', 'weight'
-
-            products_to_create = []
+            # Поиск строки с заголовками
+            header_row_index = None
             for i, row in df.iterrows():
-                # Products.objects.create(
-                #     order=order,
-                #     article=row['article'],  # Укажите нужные столбцы из вашего Excel файла
-                #     name=row['name'],
-                #     quantity=row['quantity'],
-                #     unit_price=row['unit_price'],
-                #     weight=row['weight']
-                # )
-                Products.objects.create(
-                    order=order,
-                    article=str(row.iloc[1]),  # Укажите нужные столбцы из вашего Excel файла
-                    name=row.iloc[2],
-                    quantity=row.iloc[5],
-                    unit_price=row.iloc[6],
-                    amount=row.iloc[9],
-                    weight=row.iloc[7],
-                    # eng_name=row.iloc[3]
-                )
+                if 'No. / №' in row.values:  # Замените на нужное название столбца
+                    header_row_index = i
+                    break
 
-                Products.objects.bulk_create(products_to_create) # создание объектов за один раз
+            if header_row_index is not None:
+                # Устанавливаем заголовки и отсекаем лишние строки
+                df.columns = df.iloc[header_row_index]
+                df = df[header_row_index + 1:]  # Начинаем с строки после заголовков
 
-            return redirect('goodsapp:order_review', order.id)  # Перенаправление на список заказов после загрузки
+                products_to_create = []
+                for i, row in df.iterrows():
+                    products_to_create.append(Products(
+                        order=order,
+                        article=str(row.iloc[1]),  # Укажите нужные названия столбцов
+                        name=row.iloc[2],
+                        quantity=row.iloc[5],
+                        unit_price=row.iloc[6],
+                        amount=row.iloc[9],
+                        weight=row.iloc[7],
+                    ))
+
+                Products.objects.bulk_create(products_to_create)  # Создание объектов за один раз
+
+                return redirect('goodsapp:order_review', order.id)
+
+            else:
+                messages.error(request, "Не найдены заголовки в файле.")
+                return redirect('goodsapp:index')  # Перенаправление на главную страницу или другую страницу
+
     else:
         form = ExcelUploadForm()
 
     return render(request, 'goods/upload.html', {'form': form})
+
+
+
+# @login_required
+# def upload_order(request):
+#     """
+#     Загрузка excel файла(БЕЗ ШАПКИ) только авторизованным пользователем, парсинг и добавление  в бд
+#     :param request:
+#     :return:
+#     """
+#     if request.method == 'POST':
+#         form = ExcelUploadForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             # Сохранение нового заказа
+#             order = Orders.objects.create(
+#                 name=form.cleaned_data['name'],  # Используем название из формы
+#                 description=form.cleaned_data['description'],  # Используем описание из формы
+#                 author=request.user
+#             )
+#
+#             # Обработка Excel файла
+#             df = pd.read_excel(form.cleaned_data['file'], engine='openpyxl')
+#
+#             # Предположим, что данные начинаются с первой строки и у вас есть следующие столбцы:
+#             # 'article', 'name', 'quantity', 'unit_price', 'weight'
+#
+#             products_to_create = []
+#             for i, row in df.iterrows():
+#                 # Products.objects.create(
+#                 #     order=order,
+#                 #     article=row['article'],  # Укажите нужные столбцы из вашего Excel файла
+#                 #     name=row['name'],
+#                 #     quantity=row['quantity'],
+#                 #     unit_price=row['unit_price'],
+#                 #     weight=row['weight']
+#                 # )
+#                 Products.objects.create(
+#                     order=order,
+#                     article=str(row.iloc[1]),  # Укажите нужные столбцы из вашего Excel файла
+#                     name=row.iloc[2],
+#                     quantity=row.iloc[5],
+#                     unit_price=row.iloc[6],
+#                     amount=row.iloc[9],
+#                     weight=row.iloc[7],
+#                     # eng_name=row.iloc[3]
+#                 )
+#
+#                 Products.objects.bulk_create(products_to_create) # создание объектов за один раз
+#
+#             return redirect('goodsapp:order_review', order.id)  # Перенаправление на список заказов после загрузки
+#     else:
+#         form = ExcelUploadForm()
+#
+#     return render(request, 'goods/upload.html', {'form': form})
 
 
 @login_required

@@ -38,6 +38,7 @@
             <th>Цена за единицу, RUB</th>
             <th>Стоимость, RUB</th>
             <th>Вес, кг</th>
+            <th>Статус</th>
             <th>Действия</th> <!-- Новый столбец для действий -->
         </tr>
     </thead>
@@ -50,6 +51,7 @@
             <td>{{ product.unit_price }}</td>
             <td>{{ product.amount }}</td>
             <td>{{ product.weight }}</td>
+            <td>{{ product.is_done|yesno:"True,False" }}</td>
             <td>
                 <!-- Кнопка для удаления продукта -->
                 <form action="{% url 'goodsapp:delete_product' product.id %}" method="post" style="display:inline;">
