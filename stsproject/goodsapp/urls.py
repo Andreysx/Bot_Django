@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import index, order_review, search_product, upload_order,confirm_delete_order,upload_order_view, delete_product
+from .views import index, order_review, search_product, upload_order, confirm_delete_order, upload_order_view, \
+    delete_product
 
 app_name = 'goodsapp'
 # пространство имен включается в тег url в шаблоне

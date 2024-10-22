@@ -6,9 +6,6 @@ from .forms import ExcelUploadForm
 import pandas as pd
 
 
-
-# Create your views here.
-
 def index(request):
     """ Начальная страница"""
     orders = Orders.objects.all()
@@ -57,11 +54,7 @@ def search_product(request, order_id):
 
 
 def upload_order_view(request):
-    """
-     Добавление проверки авторизации
-    :param request:
-    :return:
-    """
+    """Добавление проверки авторизации при загрузке заказа(xlsx)"""
     if not request.user.is_authenticated:
         messages.error(request, "Пожалуйста, войдите в систему для загрузки файла.")
         return redirect('login')  # Убедитесь, что здесь указан правильный URL для страницы входа
@@ -71,11 +64,7 @@ def upload_order_view(request):
 
 @login_required
 def upload_order(request):
-    """
-    Загрузка excel файла(БЕЗ ШАПКИ) только авторизованным пользователем, парсинг и добавление в БД
-    :param request:
-    :return:
-    """
+    """Загрузка excel файла только авторизованным пользователем, парсинг и добавление в БД"""
     if request.method == 'POST':
         form = ExcelUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -137,7 +126,7 @@ def upload_order(request):
 
 @login_required
 def delete_product(request, product_id):
-    """Удаление продукта из заказа"""
+    """Удаление продукта из заказа, только автором"""
     product = get_object_or_404(Products, pk=product_id)
 
     # Проверка, что текущий пользователь является автором заказа
@@ -154,6 +143,7 @@ def delete_product(request, product_id):
 
 @login_required
 def confirm_delete_order(request, order_id):
+    """Удаление заказа только автором этого заказа"""
     order = get_object_or_404(Orders, pk=order_id)
 
     # Проверка, что текущий пользователь является автором заказа

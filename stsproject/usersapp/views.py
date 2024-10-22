@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 
 def register(request):
+    """Регистрация пользователя"""
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -19,6 +20,7 @@ def register(request):
 
 
 def user_login(request):
+    """Авторизация пользователя"""
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -34,5 +36,6 @@ def user_login(request):
 
 
 def logout_view(request):
+    """Выход"""
     logout(request)
     return redirect('goodsapp:index')
