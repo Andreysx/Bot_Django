@@ -68,6 +68,7 @@ def upload_order_view(request):
 
     return upload_order(request)  # Вызов оригинального представления для загрузки файла
 
+
 @login_required
 def upload_order(request):
     """
@@ -78,6 +79,14 @@ def upload_order(request):
     if request.method == 'POST':
         form = ExcelUploadForm(request.POST, request.FILES)
         if form.is_valid():
+            # Получаем загруженный файл
+            uploaded_file = request.FILES['file']
+
+            # Проверяем расширение файла
+            if not uploaded_file.name.endswith('.xlsx'):
+                messages.error(request, "Пожалуйста, загрузите файл с расширением .xlsx.")
+                return redirect('goodsapp:upload_order')  # Перенаправление на страницу загрузки
+
             # Сохранение нового заказа
             order = Orders.objects.create(
                 name=form.cleaned_data['name'],
@@ -86,7 +95,7 @@ def upload_order(request):
             )
 
             # Обработка Excel файла без указания заголовков
-            df = pd.read_excel(form.cleaned_data['file'], engine='openpyxl', header=None)
+            df = pd.read_excel(uploaded_file, engine='openpyxl', header=None)
 
             # Поиск строки с заголовками
             header_row_index = None
@@ -124,60 +133,6 @@ def upload_order(request):
         form = ExcelUploadForm()
 
     return render(request, 'goods/upload.html', {'form': form})
-
-
-
-# @login_required
-# def upload_order(request):
-#     """
-#     Загрузка excel файла(БЕЗ ШАПКИ) только авторизованным пользователем, парсинг и добавление  в бд
-#     :param request:
-#     :return:
-#     """
-#     if request.method == 'POST':
-#         form = ExcelUploadForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             # Сохранение нового заказа
-#             order = Orders.objects.create(
-#                 name=form.cleaned_data['name'],  # Используем название из формы
-#                 description=form.cleaned_data['description'],  # Используем описание из формы
-#                 author=request.user
-#             )
-#
-#             # Обработка Excel файла
-#             df = pd.read_excel(form.cleaned_data['file'], engine='openpyxl')
-#
-#             # Предположим, что данные начинаются с первой строки и у вас есть следующие столбцы:
-#             # 'article', 'name', 'quantity', 'unit_price', 'weight'
-#
-#             products_to_create = []
-#             for i, row in df.iterrows():
-#                 # Products.objects.create(
-#                 #     order=order,
-#                 #     article=row['article'],  # Укажите нужные столбцы из вашего Excel файла
-#                 #     name=row['name'],
-#                 #     quantity=row['quantity'],
-#                 #     unit_price=row['unit_price'],
-#                 #     weight=row['weight']
-#                 # )
-#                 Products.objects.create(
-#                     order=order,
-#                     article=str(row.iloc[1]),  # Укажите нужные столбцы из вашего Excel файла
-#                     name=row.iloc[2],
-#                     quantity=row.iloc[5],
-#                     unit_price=row.iloc[6],
-#                     amount=row.iloc[9],
-#                     weight=row.iloc[7],
-#                     # eng_name=row.iloc[3]
-#                 )
-#
-#                 Products.objects.bulk_create(products_to_create) # создание объектов за один раз
-#
-#             return redirect('goodsapp:order_review', order.id)  # Перенаправление на список заказов после загрузки
-#     else:
-#         form = ExcelUploadForm()
-#
-#     return render(request, 'goods/upload.html', {'form': form})
 
 
 @login_required
