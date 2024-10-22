@@ -23,7 +23,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">{{ order.name }}</h5>
-                    <p class="card-text">{{ order.description }}</p>
+                    <p class="card-text">{{ order.is_done|yesno:"Завершен,Не завершен" }}</p>
                     <p class="text-muted">Дата: {{ order.date }}</p>
                     <a href="{% url 'goodsapp:order_review' order.id %}" class="btn btn-secondary btn-sm">Открыть</a>  <!-- Уменьшенный размер кнопки -->
                 </div>
