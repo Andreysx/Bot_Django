@@ -14,7 +14,7 @@ setup()
 from goodsapp.models import Orders, Products
 
 # Your Telegram bot token
-TOKEN = '7902068127:AAFs6JQKHllInr0ebRzHEJtZ8gpDCs-ccvs'
+TOKEN = ''
 
 bot = TeleBot(TOKEN)
 
