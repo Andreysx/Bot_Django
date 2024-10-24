@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 import sqlite3
 
+
+# TELEGRAM_BOT_API_KEY = '7902068127:AAFs6JQKHllInr0ebRzHEJtZ8gpDCs-ccvs'
+
 LOGIN_URL = 'login'  # Убедитесь, что это соответствует вашему маршруту для входа
 LOGIN_REDIRECT_URL = 'goodsapp:index'  # Куда перенаправлять после входа
 LOGOUT_REDIRECT_URL = 'goodsapp:index'  # Куда перенаправлять после выхода
@@ -52,8 +55,8 @@ INSTALLED_APPS = [
     'usersapp',
     'goodsapp',
     'debug_toolbar',
-
 ]
+
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
