@@ -14,7 +14,7 @@ setup()
 from goodsapp.models import Orders, Products
 
 # Your Telegram bot token
-TOKEN = ''
+TOKEN = '7902068127:AAFs6JQKHllInr0ebRzHEJtZ8gpDCs-ccvs'
 
 bot = TeleBot(TOKEN)
 
@@ -25,6 +25,7 @@ user_data = {}
 # Функция для обработки команды /start
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    """Обработчик команды /start - отображение кнопок"""
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button_list_orders = types.KeyboardButton("📋 Список заказов")
     button_choose_order = types.KeyboardButton("🛒 Выбрать заказ")
@@ -37,6 +38,7 @@ def start_message(message):
 # Функция для вывода всех заказов
 @bot.message_handler(func=lambda message: message.text == "📋 Список заказов")
 def list_orders_message(message):
+    """Обработчик кнопки Список заказов для отображения всех имеющихся заказов в БД"""
     orders = Orders.objects.all()
     message_text = 'Список заказов:\n'
 
@@ -52,6 +54,7 @@ def list_orders_message(message):
 # Функция для обработки выбора конкретного заказа
 @bot.message_handler(func=lambda message: message.text == "🛒 Выбрать заказ")
 def choose_order_message(message):
+    """Обработчик выбора заказа через ввод имени"""
     bot.send_message(message.chat.id, "Введите имя заказа для выбора:")
     user_data[message.chat.id] = {'waiting_for_order': True}
 
@@ -59,6 +62,7 @@ def choose_order_message(message):
 # Функция для обработки сообщения с именем заказа
 @bot.message_handler(content_types=['text'], func=lambda message: message.text and not message.text.startswith('/'))
 def handle_order_name(message):
+    """Обработчик выбора заказа(Order), а также поиск по нему продукта(Product) по полю article"""
     if message.chat.id in user_data and 'waiting_for_order' in user_data[message.chat.id]:
         # Попробуем найти заказ по имени
         orders = Orders.objects.filter(name=message.text)
@@ -87,12 +91,6 @@ def handle_order_name(message):
                 bot.send_message(message.chat.id, "Продукт не найден.")
         else:
             bot.send_message(message.chat.id, "Сначала выберите заказ.")
-
-
-# Функция для обработки инлайн кнопок (не используется в этом случае)
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    pass  # Not needed in this scenario
 
 
 # Запуск бота
